@@ -64,7 +64,7 @@ end
 --- Creates the multijob field in the player data and adds the necessary player methods.
 --- @param Player table
 local playerCreated = function(Player)
-    Player.Functions.AddField('multijob', getMultijobDatabase(Player), true)
+    Player.Functions.SetPlayerData('multijob', getMultijobDatabase(Player))
 
     Player.Functions.AddPlayerMethod('AddMultiJob', function(job, grade)
         exports['qb-multijob']:addJob(Player.PlayerData.source, job, grade)
