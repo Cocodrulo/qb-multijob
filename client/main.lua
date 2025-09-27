@@ -64,6 +64,22 @@ local multijobMenu = function ()
         }
     }
 
+    local UnemployedJob = QBCore.Shared.Jobs[Config.Unemployed.job]
+
+    if UnemployedJob and not QBCore.PlayerData.multijob[Config.Unemployed.job] then
+        elements[#elements + 1] = {
+            header = UnemployedJob.label .. ' | ' .. UnemployedJob.grades['0'].name,
+            txt = QBCore.PlayerData.job.name == Config.Unemployed.job and Lang:t('menu.current_job') or Lang:t('menu.select_job'),
+            disabled = QBCore.PlayerData.job.name == Config.Unemployed.job,
+            params = {
+                isAction = true,
+                event = function ()
+                    openJobMenu(Config.Unemployed.job, Config.Unemployed.grade)
+                end
+            }
+        }
+    end
+
     for job, grade in pairs(QBCore.PlayerData.multijob) do
         local QBjob = QBCore.Shared.Jobs[job]
         if QBjob then
