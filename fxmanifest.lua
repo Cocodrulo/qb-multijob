@@ -8,14 +8,15 @@ description "A multi-job script for QBCore framework"
 shared_scripts {
 	'@qb-core/shared/locale.lua',
     "Config.lua",
-	'locales/*.lua',
+	"locales/*.lua",
 }
 
 client_scripts {
-    "client/main.lua"
+    "client/main.lua",
+    "client/exports.lua"
 }
 
 server_scripts {
-    '@oxmysql/lib/MySQL.lua',
+    "@oxmysql/lib/MySQL.lua",
     "server/main.lua"
 }
