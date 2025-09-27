@@ -88,6 +88,8 @@ local addJob = function(id, job, grade)
     if not jobInfo then return end
 
     local Player = QBCore.Functions.GetPlayer(id) or QBCore.Functions.GetOfflinePlayerByCitizenId(id)
+    if not Player then return end
+
     if AlreadyHasJob(Player.PlayerData.multijob, jobInfo.name) then
         if Player.PlayerData.multijob[jobInfo.name] ~= grade then
             updateMultijobGradeInDatabase(Player, jobInfo.name, grade)
@@ -120,6 +122,8 @@ local removeJob = function(id, job)
     if not jobInfo then return end
 
     local Player = QBCore.Functions.GetPlayer(id) or QBCore.Functions.GetOfflinePlayerByCitizenId(id)
+    if not Player then return end
+
     if job == Config.Unemployed.job then
         Player.Functions.Notify(Lang:t('error.cannot_remove_unemployed'), 'error')
         return
@@ -190,6 +194,8 @@ local updateRank = function(id, job, grade)
     if not jobInfo then return end
 
     local Player = QBCore.Functions.GetPlayer(id) or QBCore.Functions.GetOfflinePlayerByCitizenId(id)
+    if not Player then return end
+
     if not AlreadyHasJob(Player.PlayerData.multijob, jobInfo.name) then return end
     if Player.PlayerData.multijob[jobInfo.name] == grade then return end
 
