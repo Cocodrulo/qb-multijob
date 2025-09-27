@@ -2,6 +2,10 @@
 
 A multi-job script for QBCore framework.
 
+## Instalation
+
+-   It needs [this](https://github.com/qbcore-framework/qb-core/pull/1206) pull request to be implemented
+
 ## Exports
 
 The following server exports are available:
