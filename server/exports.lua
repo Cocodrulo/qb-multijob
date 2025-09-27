@@ -80,14 +80,14 @@ local updateMultijobGradeInDatabase = function (Player, job, grade)
 end
 
 --- Adds a job to the player's multijob list.
---- @param id number
+--- @param id number | string Player id or citizenid
 --- @param job string
 --- @param grade number
 local addJob = function(id, job, grade)
     local jobInfo = QBCore.Shared.Jobs[job]
     if not jobInfo then return end
 
-    local Player = QBCore.Functions.GetPlayer(id)
+    local Player = QBCore.Functions.GetPlayer(id) or QBCore.Functions.GetOfflinePlayerByCitizenId(id)
     if AlreadyHasJob(Player.PlayerData.multijob, jobInfo.name) then
         if Player.PlayerData.multijob[jobInfo.name] ~= grade then
             updateMultijobGradeInDatabase(Player, jobInfo.name, grade)
@@ -113,13 +113,13 @@ end
 exports('addJob', addJob)
 
 --- Removes a job from the player's multijob list.
---- @param id number
+--- @param id number | string Player id or citizenid
 --- @param job string
 local removeJob = function(id, job)
     local jobInfo = QBCore.Shared.Jobs[job]
     if not jobInfo then return end
 
-    local Player = QBCore.Functions.GetPlayer(id)
+    local Player = QBCore.Functions.GetPlayer(id) or QBCore.Functions.GetOfflinePlayerByCitizenId(id)
     if job == Config.Unemployed.job then
         Player.Functions.Notify(Lang:t('error.cannot_remove_unemployed'), 'error')
         return
@@ -144,11 +144,11 @@ end
 exports('removeJob', removeJob)
 
 --- Checks if a player has a specific job in their multijob list.
---- @param id number
+--- @param id number | string Player id or citizenid
 --- @param job string
 --- @return boolean
 local hasJob = function(id, job)
-    local Player = QBCore.Functions.GetPlayer(id)
+    local Player = QBCore.Functions.GetPlayer(id) or QBCore.Functions.GetOfflinePlayerByCitizenId(id)
     if not Player then return false end
 
     return AlreadyHasJob(Player.PlayerData.multijob, job)
@@ -182,14 +182,14 @@ end
 exports('getEmployees', getEmployees)
 
 --- Updates the grade of a job in the player's multijob list.
---- @param id number
+--- @param id number | string Player id or citizenid
 --- @param job string
 --- @param grade number
 local updateRank = function(id, job, grade)
     local jobInfo = QBCore.Shared.Jobs[job]
     if not jobInfo then return end
 
-    local Player = QBCore.Functions.GetPlayer(id)
+    local Player = QBCore.Functions.GetPlayer(id) or QBCore.Functions.GetOfflinePlayerByCitizenId(id)
     if not AlreadyHasJob(Player.PlayerData.multijob, jobInfo.name) then return end
     if Player.PlayerData.multijob[jobInfo.name] == grade then return end
 
