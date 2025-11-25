@@ -2,7 +2,7 @@ fx_version "cerulean"
 game "gta5"
 
 author "Cocodrulo - QBCore"
-version "0.0.1"
+version "1.0.0"
 description "A multi-job script for QBCore framework"
 
 shared_scripts {

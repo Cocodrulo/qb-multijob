@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `multijob` (
+CREATE TABLE IF NOT EXISTS `player_multijob` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `player_cid` VARCHAR(50) NOT NULL,
     `job` VARCHAR(50) NOT NULL,
