@@ -2,6 +2,10 @@ local Translations = {
     error = {
         cannot_add_job = "No puedes agregar el trabajo: %{job} porque ya tienes un trabajo en el mismo grupo.",
         cannot_remove_unemployed = "No puedes eliminar el trabajo de desempleado.",
+        not_have_job = "No tienes el trabajo: %{job}.",
+        already_have_grade = "Ya tienes el grado: %{grade} para el trabajo: %{job}.",
+        invalid_grade = "Grado inválido.",
+        invalid_job = "Trabajo inválido.",
     },
     success = {
         new_job = "Has sido contratado para el trabajo: %{job}.",

@@ -66,8 +66,8 @@ end
 
 -- ====================|| EVENTS HANDLERS || ==================== --
 
-RegisterNetEvent('QBCore:Server:PlayerLoaded', playerCreated)
-RegisterNetEvent('QBCore:Server:OnJobUpdate', onNewJob)
+AddEventHandler('QBCore:Server:PlayerLoaded', playerCreated)
+AddEventHandler('QBCore:Server:OnJobUpdate', onNewJob)
 RegisterNetEvent('qb-multijob:server:remove', removeJob)
 RegisterNetEvent('qb-multijob:server:setJob', setJob)
 RegisterNetEvent('qb-multijob:server:setDuty', setDuty)

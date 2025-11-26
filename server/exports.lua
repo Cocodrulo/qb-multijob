@@ -100,11 +100,14 @@ end
 --- @param job string
 --- @param grade number
 local addJob = function(id, job, grade)
-    local jobInfo = QBCore.Shared.Jobs[job]
-    if not jobInfo then return end
-
     local Player = GetPlayerOrOffline(id)
     if not Player then return end
+    
+    local jobInfo = QBCore.Shared.Jobs[job]
+    if not jobInfo then 
+        Player.Functions.Notify(Lang:t('error.invalid_job'), 'error')
+        return
+    end
 
     local citizenid = Player.PlayerData.citizenid
     local multijob = Player.PlayerData.multijob
@@ -118,7 +121,13 @@ local addJob = function(id, job, grade)
                 return
             end
 
-            Player.Functions.Notify(Lang:t('success.updated_grade', { job = jobInfo.label, grade = jobInfo.grades[tostring(grade)].name }), 'success')
+            local gradeInfo = jobInfo.grades[tostring(grade)]
+            if not gradeInfo then
+                Player.Functions.Notify(Lang:t('error.invalid_grade'), 'error')
+                return
+            end
+
+            Player.Functions.Notify(Lang:t('success.updated_grade', { job = jobInfo.label, grade = gradeInfo.name }), 'success')
             return
         end
     end
@@ -146,11 +155,15 @@ exports('addJob', addJob)
 --- @param id number|string Player id or citizenid
 --- @param job string
 local removeJob = function(id, job)
-    local jobInfo = QBCore.Shared.Jobs[job]
-    if not jobInfo then return end
 
     local Player = GetPlayerOrOffline(id)
     if not Player then return end
+
+    local jobInfo = QBCore.Shared.Jobs[job]
+    if not jobInfo then
+        Player.Functions.Notify(Lang:t('error.invalid_job'), 'error')
+        return
+    end
 
     if job == Config.Unemployed.job then
         if not Player.Offline then
@@ -226,14 +239,30 @@ exports('getEmployees', getEmployees)
 --- @param job string
 --- @param grade number
 local updateRank = function(id, job, grade)
-    local jobInfo = QBCore.Shared.Jobs[job]
-    if not jobInfo then return end
-
     local Player = GetPlayerOrOffline(id)
     if not Player then return end
 
-    if not AlreadyHasJob(Player.PlayerData.multijob, jobInfo.name) then return end
-    if Player.PlayerData.multijob[jobInfo.name] == grade then return end
+    local jobInfo = QBCore.Shared.Jobs[job]
+    if not jobInfo then
+        Player.Functions.Notify(Lang:t('error.invalid_job'), 'error')
+        return
+    end
+
+    if not AlreadyHasJob(Player.PlayerData.multijob, jobInfo.name) then
+        Player.Functions.Notify(Lang:t('error.not_have_job', { job = jobInfo.label }), 'error')
+        return
+    end
+
+    local gradeInfo = jobInfo.grades[tostring(grade)]
+    if not gradeInfo then
+        Player.Functions.Notify(Lang:t('error.invalid_grade'), 'error')
+        return
+    end
+
+    if Player.PlayerData.multijob[jobInfo.name] == grade then
+        Player.Functions.Notify(Lang:t('error.already_have_grade', { grade = gradeInfo.name, job = jobInfo.label }), 'error')
+        return
+    end
 
     updateMultijobGradeInDatabase(Player.PlayerData.citizenid, jobInfo.name, grade)
     Player.PlayerData.multijob[jobInfo.name] = grade
@@ -242,7 +271,7 @@ local updateRank = function(id, job, grade)
         return
     end
 
-    Player.Functions.Notify(Lang:t('success.updated_grade', { job = jobInfo.label, grade = jobInfo.grades[tostring(grade)].name }), 'success')
+    Player.Functions.Notify(Lang:t('success.updated_grade', { job = jobInfo.label, grade = gradeInfo.name }), 'success')
 end
 
 exports('updateRank', updateRank)
