@@ -69,7 +69,7 @@ end
 --- @param job string
 --- @param grade number
 local addMultijobToDatabase = function(citizenid, job, grade)
-    MySQL.insert.await('INSERT INTO player_multijob (player_cid, job, grade) VALUES (?, ?, ?)', {
+    MySQL.insert.await('INSERT INTO player_multijob (citizenid, job, grade) VALUES (?, ?, ?)', {
         citizenid, job, grade
     })
 end
@@ -78,7 +78,7 @@ end
 --- @param citizenid string
 --- @param job string
 local removeMultijobFromDatabase = function(citizenid, job)
-    MySQL.query.await('DELETE FROM player_multijob WHERE player_cid = ? AND job = ?', {
+    MySQL.query.await('DELETE FROM player_multijob WHERE citizenid = ? AND job = ?', {
         citizenid, job
     })
 end
@@ -88,7 +88,7 @@ end
 --- @param job string
 --- @param grade number
 local updateMultijobGradeInDatabase = function(citizenid, job, grade)
-    MySQL.update.await('UPDATE player_multijob SET grade = ? WHERE player_cid = ? AND job = ?', {
+    MySQL.update.await('UPDATE player_multijob SET grade = ? WHERE citizenid = ? AND job = ?', {
         grade, citizenid, job
     })
 end
@@ -205,12 +205,12 @@ exports('hasJob', hasJob)
 --- @param job string
 --- @return table
 local getEmployees = function(job)
-    local result = MySQL.query.await('SELECT player_cid, grade FROM player_multijob WHERE job = ?', { job })
+    local result = MySQL.query.await('SELECT citizenid, grade FROM player_multijob WHERE job = ?', { job })
     local employees = {}
     if result then
         for _, v in pairs(result) do
             employees[#employees + 1] = {
-                citizenid = v.player_cid,
+                citizenid = v.citizenid,
                 job = job,
                 grade = v.grade
             }

@@ -8,7 +8,7 @@ local QBCore = exports['qb-core']:GetCoreObject()
 --- @param citizenid string
 --- @return table
 local loadMultijob = function(citizenid)
-    local result = MySQL.query.await('SELECT * FROM player_multijob WHERE player_cid = ?', { citizenid })
+    local result = MySQL.query.await('SELECT * FROM player_multijob WHERE citizenid = ?', { citizenid })
     local multijob = {[Config.Unemployed.job] = Config.Unemployed.grade}
     if result then
         for _, v in pairs(result) do
