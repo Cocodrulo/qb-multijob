@@ -1,6 +1,7 @@
 -- ====================|| VARIABLES || ==================== --
 
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject({'Functions'})
+QBCore.Shared = { Jobs = exports['qb-core']:GetSharedJobs() }
 
 -- ====================|| FUNCTIONS || ==================== --
 
@@ -59,54 +60,56 @@ end
 
 --- Opens the multijob menu for the player to select and manage their jobs.
 local multijobMenu = function()
-    local elements = {
-        {
-            header = Lang:t('menu.title'),
-            txt = Lang:t('menu.subtitle'),
-            isMenuHeader = true
-        }
-    }
-
-    local UnemployedJob = QBCore.Shared.Jobs[Config.Unemployed.job]
-
-    if UnemployedJob and not QBCore.PlayerData.multijob[Config.Unemployed.job] then
-        elements[#elements + 1] = {
-            header = ('%s | %s'):format(UnemployedJob.label, UnemployedJob.grades['0'].name),
-            txt = QBCore.PlayerData.job.name == Config.Unemployed.job and Lang:t('menu.current_job') or Lang:t('menu.select_job'),
-            disabled = QBCore.PlayerData.job.name == Config.Unemployed.job,
-            params = {
-                isAction = true,
-                event = function()
-                    openJobMenu(Config.Unemployed.job, Config.Unemployed.grade)
-                end
+    QBCore.Functions.TriggerCallback('qb-multijob:server:getJobs', function(multijob)
+        local elements = {
+            {
+                header = Lang:t('menu.title'),
+                txt = Lang:t('menu.subtitle'),
+                isMenuHeader = true
             }
         }
-    end
 
-    for job, grade in pairs(QBCore.PlayerData.multijob) do
-        local QBjob = QBCore.Shared.Jobs[job]
-        if QBjob then
+        local UnemployedJob = QBCore.Shared.Jobs[Config.Unemployed.job]
+
+        if UnemployedJob and not multijob[Config.Unemployed.job] then
             elements[#elements + 1] = {
-                header = ('%s | %s'):format(QBjob.label, QBjob.grades[tostring(grade)].name),
-                txt = QBCore.PlayerData.job.name == job and Lang:t('menu.current_job') or Lang:t('menu.select_job'),
-                disabled = QBCore.PlayerData.job.name == job,
+                header = ('%s | %s'):format(UnemployedJob.label, UnemployedJob.grades['0'].name),
+                txt = QBCore.PlayerData.job.name == Config.Unemployed.job and Lang:t('menu.current_job') or Lang:t('menu.select_job'),
+                disabled = QBCore.PlayerData.job.name == Config.Unemployed.job,
                 params = {
                     isAction = true,
                     event = function()
-                        openJobMenu(job, grade)
+                        openJobMenu(Config.Unemployed.job, Config.Unemployed.grade)
                     end
                 }
             }
         end
-    end
 
-    elements[#elements + 1] = {
-        header = '< Salir',
-        txt = 'Cerrar el menú.',
-        params = {}
-    }
+        for job, grade in pairs(multijob) do
+            local QBjob = QBCore.Shared.Jobs[job]
+            if QBjob then
+                elements[#elements + 1] = {
+                    header = ('%s | %s'):format(QBjob.label, QBjob.grades[tostring(grade)].name),
+                    txt = QBCore.PlayerData.job.name == job and Lang:t('menu.current_job') or Lang:t('menu.select_job'),
+                    disabled = QBCore.PlayerData.job.name == job,
+                    params = {
+                        isAction = true,
+                        event = function()
+                            openJobMenu(job, grade)
+                        end
+                    }
+                }
+            end
+        end
 
-    exports['qb-menu']:openMenu(elements)
+        elements[#elements + 1] = {
+            header = '< Salir',
+            txt = 'Cerrar el menú.',
+            params = {}
+        }
+
+        exports['qb-menu']:openMenu(elements)
+    end)
 end
 
 -- ====================|| EVENTS || ==================== --

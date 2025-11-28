@@ -50,15 +50,16 @@ You can customize the resource in `Config.lua`:
 
 ## 📤 Exports
 
-| Export         | Description                                                | Usage                                                   |
-| :------------- | :--------------------------------------------------------- | :------------------------------------------------------ |
-| `AddJob`       | Adds a job to the player's multi-job list.                 | `exports['qb-multijob']:AddJob(source, job, grade)`     |
-| `RemoveJob`    | Removes a job from the player's multi-job list.            | `exports['qb-multijob']:RemoveJob(source, job)`         |
-| `HasJob`       | Checks if a player has a specific job.                     | `exports['qb-multijob']:HasJob(source, job)`            |
-| `GetEmployees` | Fetches a list of all players who have the specified job.  | `exports['qb-multijob']:GetEmployees(job)`              |
-| `UpdateRank`   | Updates the grade of a job in the player's multi-job list. | `exports['qb-multijob']:UpdateRank(source, job, grade)` |
-| `SwitchJob`    | Switches the player's current job to the specified job.    | `exports['qb-multijob']:SwitchJob(source, job)`         |
-| `ToggleDuty`   | Toggles the duty status for the player.                    | `exports['qb-multijob']:ToggleDuty(source, onDuty)`     |
+| Export              | Description                                                | Usage                                                   | Availability     |
+| :------------------ | :--------------------------------------------------------- | :------------------------------------------------------ | :--------------- |
+| `AddJob`            | Adds a job to the player's multi-job list.                 | `exports['qb-multijob']:AddJob(source, job, grade)`     | Online & Offline |
+| `RemoveJob`         | Removes a job from the player's multi-job list.            | `exports['qb-multijob']:RemoveJob(source, job)`         | Online & Offline |
+| `HasJob`            | Checks if a player has a specific job.                     | `exports['qb-multijob']:HasJob(source, job)`            | Online & Offline |
+| `GetEmployees`      | Fetches a list of all players who have the specified job.  | `exports['qb-multijob']:GetEmployees(job)`              | Online & Offline |
+| `GetPlayerMultiJob` | Fetches the list of jobs for a player.                     | `exports['qb-multijob']:GetPlayerMultiJob(source)`      | Online & Offline |
+| `UpdateRank`        | Updates the grade of a job in the player's multi-job list. | `exports['qb-multijob']:UpdateRank(source, job, grade)` | Online & Offline |
+| `SwitchJob`         | Switches the player's current job to the specified job.    | `exports['qb-multijob']:SwitchJob(source, job)`         | Online (Only)    |
+| `ToggleDuty`        | Toggles the duty status for the player.                    | `exports['qb-multijob']:ToggleDuty(source, onDuty)`     | Online (Only)    |
 
 ## 📜 License
 

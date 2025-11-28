@@ -1,6 +1,9 @@
 -- ====================|| VARIABLES || ==================== --
 
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject({'Functions'})
+QBCore.Shared = { Jobs = exports['qb-core']:GetSharedJobs() }
+
+local jobsCache = {}
 
 -- ====================|| HELPERS || ==================== --
 
@@ -72,6 +75,7 @@ local addMultijobToDatabase = function(citizenid, job, grade)
     MySQL.insert.await('INSERT INTO player_multijob (citizenid, job, grade) VALUES (?, ?, ?)', {
         citizenid, job, grade
     })
+    jobsCache[citizenid] = nil
 end
 
 --- Removes a job from the player's multijob list in the database.
@@ -81,6 +85,7 @@ local removeMultijobFromDatabase = function(citizenid, job)
     MySQL.query.await('DELETE FROM player_multijob WHERE citizenid = ? AND job = ?', {
         citizenid, job
     })
+    jobsCache[citizenid] = nil
 end
 
 --- Updates the grade of a job in the player's multijob list in the database.
@@ -91,9 +96,24 @@ local updateMultijobGradeInDatabase = function(citizenid, job, grade)
     MySQL.update.await('UPDATE player_multijob SET grade = ? WHERE citizenid = ? AND job = ?', {
         grade, citizenid, job
     })
+    jobsCache[citizenid] = nil
 end
 
 -- ====================|| EXPORTS || ==================== --
+
+local getPlayerMultiJob = function(id)
+    local Player = GetPlayerOrOffline(id)
+    if not Player then return {} end
+
+    local citizenid = Player.PlayerData.citizenid
+    if jobsCache[citizenid] then return jobsCache[citizenid] end
+
+    local jobs = MySQL.query.await('SELECT * FROM player_multijob WHERE citizenid = ?', { citizenid })
+    jobsCache[citizenid] = jobs
+    return jobs
+end
+
+exports('GetPlayerMultiJob', getPlayerMultiJob)
 
 --- Adds a job to the player's multijob list.
 --- @param id number|string Player id or citizenid
@@ -110,17 +130,11 @@ local addJob = function(id, job, grade)
     end
 
     local citizenid = Player.PlayerData.citizenid
-    local multijob = Player.PlayerData.multijob
+    local multijob = getPlayerMultiJob(citizenid)
 
     if AlreadyHasJob(multijob, jobInfo.name) then
         if multijob[jobInfo.name] ~= grade then
             updateMultijobGradeInDatabase(citizenid, jobInfo.name, grade)
-            Player.PlayerData.multijob[jobInfo.name] = grade
-            if Player.Offline then
-                Player.Functions.SavePlayerData()
-                return
-            end
-
             local gradeInfo = jobInfo.grades[tostring(grade)]
             if not gradeInfo then
                 Player.Functions.Notify(Lang:t('error.invalid_grade'), 'error')
@@ -140,12 +154,6 @@ local addJob = function(id, job, grade)
     end
 
     addMultijobToDatabase(citizenid, jobInfo.name, grade)
-    Player.PlayerData.multijob[jobInfo.name] = grade
-    if Player.Offline then
-        Player.Functions.SavePlayerData()
-        return
-    end
-
     Player.Functions.Notify(Lang:t('success.new_job', { job = jobInfo.label }), 'success')
 end
 
@@ -172,29 +180,19 @@ local removeJob = function(id, job)
         return
     end
 
-    if not AlreadyHasJob(Player.PlayerData.multijob, job) then return end
-
     local citizenid = Player.PlayerData.citizenid
+
+    if not AlreadyHasJob(getPlayerMultiJob(citizenid), job) then return end
 
     if Player.PlayerData.job.name == job then
         Player.Functions.SetJob(Config.Unemployed.job, Config.Unemployed.grade)
         removeMultijobFromDatabase(citizenid, job)
-        Player.PlayerData.multijob[job] = nil
-        if Player.Offline then
-            Player.Functions.SavePlayerData()
-            return
-        end
 
         Player.Functions.Notify(Lang:t('info.removed_current_job', { job = jobInfo.label }), 'info')
         return
     end
 
     removeMultijobFromDatabase(citizenid, job)
-    Player.PlayerData.multijob[job] = nil
-    if Player.Offline then
-        Player.Functions.SavePlayerData()
-        return
-    end
 
     Player.Functions.Notify(Lang:t('success.removed_job', { job = jobInfo.label }), 'success')
 end
@@ -209,7 +207,7 @@ local hasJob = function(id, job)
     local Player = GetPlayerOrOffline(id)
     if not Player then return false end
 
-    return AlreadyHasJob(Player.PlayerData.multijob, job)
+    return AlreadyHasJob(getPlayerMultiJob(Player.PlayerData.citizenid), job)
 end
 
 exports('HasJob', hasJob)
@@ -248,7 +246,9 @@ local updateRank = function(id, job, grade)
         return
     end
 
-    if not AlreadyHasJob(Player.PlayerData.multijob, jobInfo.name) then
+    local multijob = getPlayerMultiJob(Player.PlayerData.citizenid)
+
+    if not AlreadyHasJob(multijob, jobInfo.name) then
         Player.Functions.Notify(Lang:t('error.not_have_job', { job = jobInfo.label }), 'error')
         return
     end
@@ -259,18 +259,12 @@ local updateRank = function(id, job, grade)
         return
     end
 
-    if Player.PlayerData.multijob[jobInfo.name] == grade then
+    if multijob[jobInfo.name] == grade then
         Player.Functions.Notify(Lang:t('error.already_have_grade', { grade = gradeInfo.name, job = jobInfo.label }), 'error')
         return
     end
 
     updateMultijobGradeInDatabase(Player.PlayerData.citizenid, jobInfo.name, grade)
-    Player.PlayerData.multijob[jobInfo.name] = grade
-    if Player.Offline then
-        Player.Functions.SavePlayerData()
-        return
-    end
-
     Player.Functions.Notify(Lang:t('success.updated_grade', { job = jobInfo.label, grade = gradeInfo.name }), 'success')
 end
 
@@ -284,9 +278,11 @@ local switchJob = function(source, job)
     if not Player then return end
 
     if Player.PlayerData.job.name == job then return end
-    if not Player.PlayerData.multijob[job] then return end
 
-    local grade = Player.PlayerData.multijob[job]
+    local multijob = getPlayerMultiJob(Player.PlayerData.citizenid)
+    if not AlreadyHasJob(multijob, job) then return end
+
+    local grade = multijob[job]
     Player.Functions.SetJob(job, grade)
     Player.Functions.Notify(Lang:t('success.set_job', { job = job }), 'success')
 end
