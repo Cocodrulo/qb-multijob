@@ -38,6 +38,12 @@ local GetPlayerOrOffline = function(source)
     end
 end
 
+--- Removes a job from the player's multijob list in the cache.
+--- @param citizenid string
+RemoveFromCache = function(citizenid)
+    jobsCache[citizenid] = nil
+end
+
 -- ====================|| CORE FUNCTIONS || ==================== --
 
 --- Checks if the player already has the specified job in their multijob list.
@@ -75,7 +81,7 @@ local addMultijobToDatabase = function(citizenid, job, grade)
     MySQL.insert.await('INSERT INTO player_multijob (citizenid, job, grade) VALUES (?, ?, ?)', {
         citizenid, job, grade
     })
-    jobsCache[citizenid] = nil
+    RemoveFromCache(citizenid)
 end
 
 --- Removes a job from the player's multijob list in the database.
@@ -85,7 +91,7 @@ local removeMultijobFromDatabase = function(citizenid, job)
     MySQL.query.await('DELETE FROM player_multijob WHERE citizenid = ? AND job = ?', {
         citizenid, job
     })
-    jobsCache[citizenid] = nil
+    RemoveFromCache(citizenid)
 end
 
 --- Updates the grade of a job in the player's multijob list in the database.
@@ -96,7 +102,7 @@ local updateMultijobGradeInDatabase = function(citizenid, job, grade)
     MySQL.update.await('UPDATE player_multijob SET grade = ? WHERE citizenid = ? AND job = ?', {
         grade, citizenid, job
     })
-    jobsCache[citizenid] = nil
+    RemoveFromCache(citizenid)
 end
 
 -- ====================|| EXPORTS || ==================== --
@@ -109,7 +115,10 @@ local getPlayerMultiJob = function(id)
     if jobsCache[citizenid] then return jobsCache[citizenid] end
 
     local jobs = MySQL.query.await('SELECT * FROM player_multijob WHERE citizenid = ?', { citizenid })
-    jobsCache[citizenid] = jobs
+    if not Player.Offline then
+        jobsCache[citizenid] = jobs
+    end
+
     return jobs
 end
 

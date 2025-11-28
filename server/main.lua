@@ -1,6 +1,6 @@
 -- ====================|| VARIABLES || ==================== --
 
-local CreateCallback = exports['qb-core'].CreateCallback
+local QBCore = exports['qb-core']:GetCoreObject({ 'Functions' })
 
 -- ====================|| FUNCTIONS || ==================== --
 
@@ -34,7 +34,7 @@ end
 
 -- ====================|| CALLBACKS || ==================== --
 
-CreateCallback('qb-multijob:server:getJobs', function(source, cb)
+QBCore.Functions.CreateCallback('qb-multijob:server:getJobs', function(source, cb)
     cb(exports['qb-multijob']:GetPlayerMultiJob(source))
 end)
 
@@ -44,3 +44,7 @@ AddEventHandler('QBCore:Server:OnJobUpdate', onNewJob)
 RegisterNetEvent('qb-multijob:server:remove', removeJob)
 RegisterNetEvent('qb-multijob:server:setJob', setJob)
 RegisterNetEvent('qb-multijob:server:setDuty', setDuty)
+AddEventHandler('QBCore:Server:OnPlayerUnload', function(source)
+    local citizenid = QBCore.Functions.GetPlayer(source).PlayerData.citizenid
+    RemoveFromCache(citizenid)
+end)
