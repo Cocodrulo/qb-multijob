@@ -1,35 +1,35 @@
-# qb-multijob
+# 👷 qb-multijob
 
 A comprehensive multi-job system for the QBCore framework, allowing players to hold multiple jobs simultaneously with configurable limits and restrictions.
 
-## Features
+## ✨ Features
 
-- **Multiple Jobs**: Players can have multiple jobs at the same time.
-- **Configurable Limits**: Set a maximum number of jobs a player can hold.
-- **Job Restrictions**: Prevent players from holding conflicting jobs (e.g., Police and Ambulance) using `ProhibitedGroups`.
-- **User-Friendly Menu**: Built with `qb-menu` for easy job management.
-- **Unemployed Fallback**: Automatically handles the "unemployed" status.
-- **Developer Friendly**: Includes server-side exports for easy integration with other resources.
-- **Localization**: Supports multiple languages via `locales`.
+-   💼 **Multiple Jobs**: Players can have multiple jobs at the same time.
+-   🔢 **Configurable Limits**: Set a maximum number of jobs a player can hold.
+-   🚫 **Job Restrictions**: Prevent players from holding conflicting jobs (e.g., Police and Ambulance) using `ProhibitedGroups`.
+-   🖥️ **User-Friendly Menu**: Built with `qb-menu` for easy job management.
+-   📉 **Unemployed Fallback**: Automatically handles the "unemployed" status.
+-   🛠️ **Developer Friendly**: Includes server-side exports for easy integration with other resources.
+-   🌍 **Localization**: Supports multiple languages via `locales`.
 
-## Dependencies
+## 📦 Dependencies
 
-- [qb-core](https://github.com/qbcore-framework/qb-core)
-- [oxmysql](https://github.com/overextended/oxmysql)
-- [qb-menu](https://github.com/qbcore-framework/qb-menu)
+-   [qb-core](https://github.com/qbcore-framework/qb-core)
+-   [oxmysql](https://github.com/overextended/oxmysql)
+-   [qb-menu](https://github.com/qbcore-framework/qb-menu)
 
-## Installation
+## 💿 Installation
 
 1. **Download**: Clone or download this repository to your `resources` directory.
 2. **Database**: Import the `multijob.sql` file into your database.
 3. **Configuration**: Adjust `Config.lua` to your liking.
 4. **Server Config**: Add the following to your `server.cfg`:
 
-   ```cfg
-   ensure qb-multijob
-   ```
+    ```cfg
+    ensure qb-multijob
+    ```
 
-## Configuration
+## ⚙️ Configuration
 
 You can customize the resource in `Config.lua`:
 
@@ -40,58 +40,26 @@ You can customize the resource in `Config.lua`:
 | `Config.CommandName`      | The command to open the multi-job menu.                           | `"multijob"`                        |
 | `Config.ProhibitedGroups` | List of job groups that cannot be held simultaneously.            | `{{ 'police', 'ambulance' }, ...}`  |
 
-## Usage
+## 🚀 Usage
 
-- **Command**: Use `/multijob` (or your configured command) to open the menu.
-- **Menu Options**:
-  - **Select Job**: Switch your active job.
-  - **Toggle Duty**: Go on/off duty for your current job.
-  - **Remove Job**: Quit a specific job.
+-   **Command**: Use `/multijob` (or your configured command) to open the menu.
+-   **Menu Options**:
+    -   **Select Job**: Switch your active job.
+    -   **Toggle Duty**: Go on/off duty for your current job.
+    -   **Remove Job**: Quit a specific job.
 
-## Exports
+## 📤 Exports
 
-Developers can use the following server-side exports to interact with the multi-job system:
+| Export         | Description                                                | Usage                                                   |
+| :------------- | :--------------------------------------------------------- | :------------------------------------------------------ |
+| `AddJob`       | Adds a job to the player's multi-job list.                 | `exports['qb-multijob']:AddJob(source, job, grade)`     |
+| `RemoveJob`    | Removes a job from the player's multi-job list.            | `exports['qb-multijob']:RemoveJob(source, job)`         |
+| `HasJob`       | Checks if a player has a specific job.                     | `exports['qb-multijob']:HasJob(source, job)`            |
+| `GetEmployees` | Fetches a list of all players who have the specified job.  | `exports['qb-multijob']:GetEmployees(job)`              |
+| `UpdateRank`   | Updates the grade of a job in the player's multi-job list. | `exports['qb-multijob']:UpdateRank(source, job, grade)` |
+| `SwitchJob`    | Switches the player's current job to the specified job.    | `exports['qb-multijob']:SwitchJob(source, job)`         |
+| `ToggleDuty`   | Toggles the duty status for the player.                    | `exports['qb-multijob']:ToggleDuty(source, onDuty)`     |
 
-### `addJob`
-
-Adds a job to the player's multi-job list.
-
-```lua
-exports['qb-multijob']:addJob(source, jobName, grade)
-```
-
-### `removeJob`
-
-Removes a job from the player's multi-job list.
-
-```lua
-exports['qb-multijob']:removeJob(source, jobName)
-```
-
-### `hasJob`
-
-Checks if a player has a specific job.
-
-```lua
-local hasJob = exports['qb-multijob']:hasJob(source, jobName)
-```
-
-### `getEmployees`
-
-Fetches a list of all players who have the specified job.
-
-```lua
-local employees = exports['qb-multijob']:getEmployees(jobName)
-```
-
-### `updateRank`
-
-Updates the grade of a job in the player's multi-job list.
-
-```lua
-exports['qb-multijob']:updateRank(source, jobName, newGrade)
-```
-
-## License
+## 📜 License
 
 This project is licensed under the [GPL-3.0 License](LICENSE).

@@ -149,7 +149,7 @@ local addJob = function(id, job, grade)
     Player.Functions.Notify(Lang:t('success.new_job', { job = jobInfo.label }), 'success')
 end
 
-exports('addJob', addJob)
+exports('AddJob', addJob)
 
 --- Removes a job from the player's multijob list.
 --- @param id number|string Player id or citizenid
@@ -199,7 +199,7 @@ local removeJob = function(id, job)
     Player.Functions.Notify(Lang:t('success.removed_job', { job = jobInfo.label }), 'success')
 end
 
-exports('removeJob', removeJob)
+exports('RemoveJob', removeJob)
 
 --- Checks if a player has a specific job in their multijob list.
 --- @param id number|string Player id or citizenid
@@ -212,7 +212,7 @@ local hasJob = function(id, job)
     return AlreadyHasJob(Player.PlayerData.multijob, job)
 end
 
-exports('hasJob', hasJob)
+exports('HasJob', hasJob)
 
 --- Fetches a list of all players who have the specified job in their multijob list.
 --- @param job string
@@ -232,7 +232,7 @@ local getEmployees = function(job)
     return employees
 end
 
-exports('getEmployees', getEmployees)
+exports('GetEmployees', getEmployees)
 
 --- Updates the grade of a job in the player's multijob list.
 --- @param id number|string Player id or citizenid
@@ -274,7 +274,7 @@ local updateRank = function(id, job, grade)
     Player.Functions.Notify(Lang:t('success.updated_grade', { job = jobInfo.label, grade = gradeInfo.name }), 'success')
 end
 
-exports('updateRank', updateRank)
+exports('UpdateRank', updateRank)
 
 --- Switches the player's current job to the specified job if available.
 --- @param source number
@@ -291,7 +291,7 @@ local switchJob = function(source, job)
     Player.Functions.Notify(Lang:t('success.set_job', { job = job }), 'success')
 end
 
-exports('switchJob', switchJob)
+exports('SwitchJob', switchJob)
 
 --- Toggles the duty status for the player.
 --- @param source number
@@ -304,4 +304,4 @@ local toggleDuty = function(source, onDuty)
     Player.Functions.SetJobDuty(onDuty)
 end
 
-exports('toggleDuty', toggleDuty)
+exports('ToggleDuty', toggleDuty)
