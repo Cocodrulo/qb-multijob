@@ -19,8 +19,9 @@ jobs:
 
             - name: Determine bump type from commit message
               id: bump
+              env:
+                  COMMIT_MSG: ${{ github.event.head_commit.message }}
               run: |
-                  COMMIT_MSG="${{ github.event.head_commit.message }}"
                   echo "🔍 Commit message: $COMMIT_MSG"
 
                   if echo "$COMMIT_MSG" | grep -qE 'BREAKING CHANGE|!:'; then
@@ -63,6 +64,9 @@ jobs:
 
             - name: Commit and push version bump
               if: steps.bump.outputs.bump != 'none'
+              env:
+                  COMMIT_MSG: ${{ github.event.head_commit.message }}
+                  NEW_VERSION: ${{ env.new_version }}
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -73,6 +77,5 @@ jobs:
                     exit 0
                   fi
 
-                  COMMIT_MSG="${{ github.event.head_commit.message }}"
-                  git commit -m "ci: bump fxmanifest version to ${{ env.new_version }} – $COMMIT_MSG"
+                  git commit -m "ci: bump fxmanifest version to $NEW_VERSION – $COMMIT_MSG"
                   git push
